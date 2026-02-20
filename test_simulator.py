@@ -268,8 +268,8 @@ class TestComputeProbabilities:
         results = run_trials(teams, n=100)
         rows = compute_probabilities(teams, results)
         for row in rows:
-            for key in ["prb_rd1", "prb_rd2", "prb_s16", "prb_e8",
-                        "prb_f4", "prb_finals", "prb_champ"]:
+            for key in ["prb_win_rd64", "prb_win_rd32", "prb_win_s16",
+                        "prb_win_e8", "prb_win_f4", "prb_win_champ"]:
                 assert 0.0 <= row[key] <= 1.0, f"{key} out of range for {row['team']}"
 
     def test_probs_decrease_across_rounds(self, teams):
@@ -278,18 +278,17 @@ class TestComputeProbabilities:
         results = run_trials(teams, n=500)
         rows = compute_probabilities(teams, results)
         for row in rows:
-            assert row["prb_rd1"]    >= row["prb_rd2"],    row["team"]
-            assert row["prb_rd2"]    >= row["prb_s16"],    row["team"]
-            assert row["prb_s16"]    >= row["prb_e8"],     row["team"]
-            assert row["prb_e8"]     >= row["prb_f4"],     row["team"]
-            assert row["prb_f4"]     >= row["prb_finals"], row["team"]
-            assert row["prb_finals"] >= row["prb_champ"],  row["team"]
+            assert row["prb_win_rd64"] >= row["prb_win_rd32"], row["team"]
+            assert row["prb_win_rd32"] >= row["prb_win_s16"],  row["team"]
+            assert row["prb_win_s16"]  >= row["prb_win_e8"],   row["team"]
+            assert row["prb_win_e8"]   >= row["prb_win_f4"],   row["team"]
+            assert row["prb_win_f4"]   >= row["prb_win_champ"], row["team"]
 
     def test_champ_probs_sum_to_one(self, teams):
         random.seed(1)
         results = run_trials(teams, n=500)
         rows = compute_probabilities(teams, results)
-        total = sum(r["prb_champ"] for r in rows)
+        total = sum(r["prb_win_champ"] for r in rows)
         assert total == pytest.approx(1.0, abs=0.02)
 
     def test_better_seed_higher_champ_prob(self, teams):
@@ -299,8 +298,8 @@ class TestComputeProbabilities:
         rows = compute_probabilities(teams, results)
         by_name = {r["team"]: r for r in rows}
         for region in REGIONS:
-            s1 = by_name[f"{region}_S1"]["prb_champ"]
-            s16 = by_name[f"{region}_S16"]["prb_champ"]
+            s1 = by_name[f"{region}_S1"]["prb_win_champ"]
+            s16 = by_name[f"{region}_S16"]["prb_win_champ"]
             assert s1 > s16, f"{region}: seed 1 ({s1}) not > seed 16 ({s16})"
 
 
@@ -342,8 +341,8 @@ class TestSaveProbabilities:
         with open(out) as f:
             reader = csv.DictReader(f)
             cols = reader.fieldnames
-        expected = ["team", "seed", "region", "prb_rd1", "prb_rd2",
-                    "prb_s16", "prb_e8", "prb_f4", "prb_finals", "prb_champ"]
+        expected = ["team", "seed", "region", "prb_win_rd64", "prb_win_rd32",
+                    "prb_win_s16", "prb_win_e8", "prb_win_f4", "prb_win_champ"]
         assert cols == expected
 
     def test_correct_row_count(self, teams, tmp_path):
