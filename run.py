@@ -54,7 +54,7 @@ def main():
         print("  " + "-" * 52)
         for row in rows[:10]:
             print(f"  {row['team']:<25} {row['seed']:<6} {row['region']:<10} "
-                  f"{row['prb_champ']*100:>6.1f}%")
+                  f"{row['prb_win_champ']*100:>6.1f}%")
 
 
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ SEED_MATCHUPS = [(1, 16), (8, 9), (5, 12), (4, 13), (6, 11), (3, 14), (7, 10), (
 
 # Round names by round index (0=R64, 1=R32, 2=S16, 3=E8, 4=F4, 5=Champ)
 ROUND_NAMES = ["Round of 64", "Round of 32", "Sweet 16", "Elite 8", "Final Four", "Championship"]
-ROUND_KEYS  = ["rd1", "rd2", "s16", "e8", "f4", "finals", "champ"]
+ROUND_KEYS  = ["rd64", "rd32", "s16", "e8", "f4", "champ"]
 
 REGIONS = ["East", "West", "South", "Midwest"]
 # Final Four pairings: East vs West, South vs Midwest
@@ -154,38 +154,37 @@ def run_trials(teams: list[Team], n: int = 10000) -> list[dict]:
 
 def compute_probabilities(teams: list[Team], results: list[dict]) -> list[dict]:
     """
-    Given n simulation results, compute per-team round advancement probabilities.
-    Rounds: rd1 (R32), rd2 (S16), s16 (E8), e8 (F4), f4 (Finals), finals (Champ game), champ (Winner)
-    rd1 = advanced past round-of-64 (won at least 1 game in region)
+    Given n simulation results, compute per-team win probabilities for each of the 6 rounds.
+    Each column = P(team wins their game IN that round):
+      prb_win_rd64  – won Round of 64 game
+      prb_win_rd32  – won Round of 32 game
+      prb_win_s16   – won Sweet 16 game
+      prb_win_e8    – won Elite 8 game
+      prb_win_f4    – won Final Four game
+      prb_win_champ – won Championship game
     """
     n = len(results)
-    # Count wins per round per team
-    counts = {t.name: [0] * 7 for t in teams}  # 7 columns: rd1..champ
+    # 6 slots: [rd64, rd32, s16, e8, f4, champ]
+    counts = {t.name: [0] * 6 for t in teams}
 
     for result in results:
         rb = result["region_brackets"]
         for reg, rounds in rb.items():
-            # rounds[0] = R64 games, rounds[1] = R32, rounds[2] = S16, rounds[3] = E8
+            # rounds[0]=R64, rounds[1]=R32, rounds[2]=S16, rounds[3]=E8
             for r_idx, games in enumerate(rounds):
                 for winner, loser in games:
                     if winner.name in counts:
-                        counts[winner.name][r_idx] += 1  # 0=rd1,1=rd2,2=s16,3=e8
+                        counts[winner.name][r_idx] += 1
 
-        # Final Four games (round index 4 = f4)
+        # Final Four winners (index 4)
         for winner, loser in result["f4_results"]:
             if winner.name in counts:
                 counts[winner.name][4] += 1
 
-        # Championship appearance (made finals = won F4) already counted above
-        # Championship win (round index 6 = champ)
+        # Championship winner (index 5)
         champ, runner_up = result["champ_result"]
         if champ.name in counts:
-            counts[champ.name][6] += 1
-        # Both finalist advanced to finals (round index 5)
-        if champ.name in counts:
             counts[champ.name][5] += 1
-        if runner_up.name in counts:
-            counts[runner_up.name][5] += 1
 
     rows = []
     for t in teams:
@@ -194,23 +193,22 @@ def compute_probabilities(teams: list[Team], results: list[dict]) -> list[dict]:
             "team": t.name,
             "seed": t.seed,
             "region": t.region,
-            "prb_rd1":    round(c[0] / n, 4),
-            "prb_rd2":    round(c[1] / n, 4),
-            "prb_s16":    round(c[2] / n, 4),
-            "prb_e8":     round(c[3] / n, 4),
-            "prb_f4":     round(c[4] / n, 4),
-            "prb_finals": round(c[5] / n, 4),
-            "prb_champ":  round(c[6] / n, 4),
+            "prb_win_rd64":  round(c[0] / n, 4),
+            "prb_win_rd32":  round(c[1] / n, 4),
+            "prb_win_s16":   round(c[2] / n, 4),
+            "prb_win_e8":    round(c[3] / n, 4),
+            "prb_win_f4":    round(c[4] / n, 4),
+            "prb_win_champ": round(c[5] / n, 4),
         })
-    rows.sort(key=lambda r: r["prb_champ"], reverse=True)
+    rows.sort(key=lambda r: r["prb_win_champ"], reverse=True)
     return rows
 
 
 def save_probabilities(rows: list[dict], path: str | None = None) -> str:
     if path is None:
         path = f"probs_{date.today().isoformat()}.csv"
-    fieldnames = ["team", "seed", "region", "prb_rd1", "prb_rd2", "prb_s16",
-                  "prb_e8", "prb_f4", "prb_finals", "prb_champ"]
+    fieldnames = ["team", "seed", "region", "prb_win_rd64", "prb_win_rd32", "prb_win_s16",
+                  "prb_win_e8", "prb_win_f4", "prb_win_champ"]
     with open(path, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=fieldnames)
         w.writeheader()

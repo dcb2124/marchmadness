@@ -69,13 +69,12 @@ python run.py --teams sample_teams.csv --trials 10000 --seed 42
 | `team` | Team name |
 | `seed` | Tournament seed (1–16) |
 | `region` | Region |
-| `prb_rd1` | P(advance past Round of 64) |
-| `prb_rd2` | P(advance past Round of 32) |
-| `prb_s16` | P(reach Sweet 16) |
-| `prb_e8` | P(reach Elite 8) |
-| `prb_f4` | P(reach Final Four) |
-| `prb_finals` | P(reach Championship game) |
-| `prb_champ` | P(win Championship) |
+| `prb_win_rd64` | P(win Round of 64 game) |
+| `prb_win_rd32` | P(win Round of 32 game) |
+| `prb_win_s16` | P(win Sweet 16 game) |
+| `prb_win_e8` | P(win Elite 8 game) |
+| `prb_win_f4` | P(win Final Four game) |
+| `prb_win_champ` | P(win Championship game) |
 
 ## ELO mechanics
 
