@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.warrennolan.com)",
+      "WebFetch(domain:en.wikipedia.org)",
+      "WebFetch(domain:www.espn.com)",
+      "WebFetch(domain:www.ncaa.com)",
+      "WebFetch(domain:www.hoopshq.com)",
+      "Bash(pip install:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(python:*)"
+    ]
+  }
+}
