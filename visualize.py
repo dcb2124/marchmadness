@@ -281,12 +281,6 @@ def draw_bracket_png(result: dict, out_path: str | None = None) -> str:
     for reg, rounds in result["region_brackets"].items():
         for w, l in rounds[0]:
             seed_lookup[w.name] = w.seed
-            seed_lookup[l.name] = l.name  # BUG guard: use seed below
-    # Rebuild correctly
-    seed_lookup = {}
-    for reg, rounds in result["region_brackets"].items():
-        for w, l in rounds[0]:
-            seed_lookup[w.name] = w.seed
             seed_lookup[l.name] = l.seed
 
     # Figure size: 4 rounds per side + center 2 cols
