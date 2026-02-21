@@ -2,3 +2,9 @@ __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
+
+# Generated outputs
+bracket_*.txt
+bracket_*.png
+probs_*.csv
+seeding_analysis_*.txt

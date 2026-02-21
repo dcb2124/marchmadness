@@ -97,7 +97,7 @@ python analyze_seeding.py --teams teams_2.20.csv
 python analyze_seeding.py --teams teams_2.20.csv --top 5
 ```
 
-Output shows:
+Outputs to terminal and saves `seeding_analysis_YYYY-MM-DD.txt`:
 - Average ELO for each seed (1–16)
 - Top N **underseeded** teams (ELO well above their seed's average — deserve a better seed)
 - Top N **overseeded** teams (ELO well below their seed's average — got too generous a seed)
