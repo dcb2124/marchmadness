@@ -17,9 +17,9 @@ SEED_MATCHUPS = [(1, 16), (8, 9), (5, 12), (4, 13), (6, 11), (3, 14), (7, 10), (
 ROUND_NAMES = ["Round of 64", "Round of 32", "Sweet 16", "Elite 8", "Final Four", "Championship"]
 ROUND_KEYS  = ["rd64", "rd32", "s16", "e8", "f4", "champ"]
 
-REGIONS = ["East", "West", "South", "Midwest"]
-# Final Four pairings: East vs West, South vs Midwest
-SEMIFINAL_PAIRS = [("East", "West"), ("South", "Midwest")]
+REGIONS = ["east", "west", "south", "midwest"]
+# Final Four pairings: east vs west, south vs midwest
+SEMIFINAL_PAIRS = [("east", "west"), ("south", "midwest")]
 
 
 @dataclass
@@ -31,17 +31,80 @@ class Team:
 
 
 def load_teams(path: str) -> list[Team]:
+    """
+    Load teams from CSV. Rows missing team/elo/seed/region are silently skipped.
+    Raises ValueError if the resulting field fails structural validation:
+      - exactly 64 unique team names
+      - exactly 4 regions
+      - exactly 16 teams per region
+      - seeds 1-16 present exactly once per region
+    """
     teams = []
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            teams.append(Team(
-                name=row["team"].strip(),
-                elo=float(row["elo"]),
-                seed=int(row["seed"]),
-                region=row["region"].strip(),
-            ))
+            # Skip rows missing any required field or with blank values
+            try:
+                name   = row["team"].strip()
+                elo    = row["elo"].strip()
+                seed   = row["seed"].strip()
+                region = row["region"].strip()
+            except KeyError:
+                continue
+            if not name or not elo or not seed or not region:
+                continue
+            region = region.lower()
+            try:
+                teams.append(Team(
+                    name=name,
+                    elo=float(elo),
+                    seed=int(seed),
+                    region=region,
+                ))
+            except (ValueError, TypeError):
+                continue
+
+    _validate_teams(teams)
     return teams
+
+
+def _validate_teams(teams: list[Team]) -> None:
+    errors = []
+
+    names = [t.name for t in teams]
+    if len(names) != len(set(names)):
+        dupes = [n for n in set(names) if names.count(n) > 1]
+        errors.append(f"Duplicate team names: {dupes}")
+
+    if len(teams) != 64:
+        errors.append(f"Expected 64 teams, got {len(teams)}")
+
+    by_region: dict[str, list[Team]] = {}
+    for t in teams:
+        by_region.setdefault(t.region, []).append(t)
+
+    unknown = sorted(set(by_region.keys()) - set(REGIONS))
+    if unknown:
+        errors.append(f"Unknown region name(s): {unknown}. Must be one of: {REGIONS}")
+
+    if len(by_region) != 4:
+        errors.append(f"Expected 4 regions, got {len(by_region)}: {list(by_region.keys())}")
+
+    for region, rteams in by_region.items():
+        if len(rteams) != 16:
+            errors.append(f"Region '{region}': expected 16 teams, got {len(rteams)}")
+            continue
+        seeds = sorted(t.seed for t in rteams)
+        if seeds != list(range(1, 17)):
+            missing = sorted(set(range(1, 17)) - set(seeds))
+            extra   = sorted(set(seeds) - set(range(1, 17)))
+            msg = f"Region '{region}': seeds must be 1-16 exactly once."
+            if missing: msg += f" Missing: {missing}."
+            if extra:   msg += f" Extra/invalid: {extra}."
+            errors.append(msg)
+
+    if errors:
+        raise ValueError("Invalid team file:\n  " + "\n  ".join(errors))
 
 
 def win_prob(team_a: Team, team_b: Team) -> float:

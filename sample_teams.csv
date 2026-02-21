@@ -1,65 +1,65 @@
 team,elo,seed,region
-Michigan,1871,1,East
-Duke,1803,1,West
-Arizona,1792,1,South
-Houston,1784,1,Midwest
-Iowa State,1753,2,East
-Florida,1752,2,West
-Saint Johns,1751,2,South
-Connecticut,1751,2,Midwest
-Gonzaga,1746,3,East
-Kansas,1744,3,West
-Purdue,1740,3,South
-Tennessee,1738,3,Midwest
-Alabama,1730,4,East
-Illinois,1728,4,West
-Texas Tech,1725,4,South
-Vanderbilt,1720,4,Midwest
-North Carolina,1715,5,East
-BYU,1710,5,West
-Auburn,1705,5,South
-Clemson,1700,5,Midwest
-Kentucky,1695,6,East
-Arkansas,1690,6,West
-Villanova,1685,6,South
-Saint Louis,1680,6,Midwest
-Louisville,1675,7,East
-NC State,1670,7,West
-Texas A&M,1665,7,South
-Indiana,1660,7,Midwest
-Utah State,1655,8,East
-Iowa,1650,8,West
-Texas,1645,8,South
-Auburn,1640,8,Midwest
-Wisconsin,1635,9,East
-Georgia,1630,9,West
-SMU,1625,9,South
-UCF,1620,9,Midwest
-Missouri,1615,10,East
-Saint Marys,1610,10,West
-USC,1605,10,South
-Oklahoma State,1600,10,Midwest
-Michigan State,1595,11,East
-Miami OH,1590,11,West
-Santa Clara,1585,11,South
-UCLA,1580,11,Midwest
-Virginia,1575,12,East
-Yale,1570,12,West
-Belmont,1565,12,South
-Tulsa,1560,12,Midwest
-Liberty,1555,13,East
-High Point,1550,13,West
-Stephen F Austin,1545,13,South
-Hawaii,1540,13,Midwest
-Charleston,1535,14,East
-Wright State,1530,14,West
-East Tennessee State,1525,14,South
-North Dakota State,1520,14,Midwest
-Navy,1515,15,East
-Portland State,1510,15,West
-Austin Peay,1505,15,South
-Bethune Cookman,1500,15,Midwest
-Long Island,1495,16,East
-Morgan State,1490,16,West
-UT Martin,1485,16,South
-NJIT,1480,16,Midwest
+Michigan,1871,1,east
+Duke,1803,1,west
+Arizona,1792,1,south
+Houston,1784,1,midwest
+Iowa State,1753,2,east
+Florida,1752,2,west
+Saint Johns,1751,2,south
+Connecticut,1751,2,midwest
+Gonzaga,1746,3,east
+Kansas,1744,3,west
+Purdue,1740,3,south
+Tennessee,1738,3,midwest
+Alabama,1730,4,east
+Illinois,1728,4,west
+Texas Tech,1725,4,south
+Vanderbilt,1720,4,midwest
+North Carolina,1715,5,east
+BYU,1710,5,west
+Auburn,1705,5,south
+Clemson,1700,5,midwest
+Kentucky,1695,6,east
+Arkansas,1690,6,west
+Villanova,1685,6,south
+Saint Louis,1680,6,midwest
+Louisville,1675,7,east
+NC State,1670,7,west
+Texas A&M,1665,7,south
+Indiana,1660,7,midwest
+Utah State,1655,8,east
+Iowa,1650,8,west
+Texas,1645,8,south
+Mississippi State,1640,8,midwest
+Wisconsin,1635,9,east
+Georgia,1630,9,west
+SMU,1625,9,south
+UCF,1620,9,midwest
+Missouri,1615,10,east
+Saint Marys,1610,10,west
+USC,1605,10,south
+Oklahoma State,1600,10,midwest
+Michigan State,1595,11,east
+Miami OH,1590,11,west
+Santa Clara,1585,11,south
+UCLA,1580,11,midwest
+Virginia,1575,12,east
+Yale,1570,12,west
+Belmont,1565,12,south
+Tulsa,1560,12,midwest
+Liberty,1555,13,east
+High Point,1550,13,west
+Stephen F Austin,1545,13,south
+Hawaii,1540,13,midwest
+Charleston,1535,14,east
+Wright State,1530,14,west
+East Tennessee State,1525,14,south
+North Dakota State,1520,14,midwest
+Navy,1515,15,east
+Portland State,1510,15,west
+Austin Peay,1505,15,south
+Bethune Cookman,1500,15,midwest
+Long Island,1495,16,east
+Morgan State,1490,16,west
+UT Martin,1485,16,south
+NJIT,1480,16,midwest

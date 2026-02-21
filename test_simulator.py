@@ -8,7 +8,7 @@ import random
 import tempfile
 import pytest
 from simulator import (
-    Team, load_teams, win_prob, update_elo, simulate_game,
+    Team, load_teams, _validate_teams, win_prob, update_elo, simulate_game,
     build_region_bracket, simulate_region, simulate_tournament,
     run_single, run_trials, compute_probabilities, save_probabilities,
     SEED_MATCHUPS, REGIONS,
@@ -46,7 +46,7 @@ def teams():
 
 @pytest.fixture
 def region_teams():
-    return [t for t in make_teams() if t.region == "East"]
+    return [t for t in make_teams() if t.region == "east"]
 
 
 @pytest.fixture
@@ -307,6 +307,13 @@ class TestComputeProbabilities:
 # CSV I/O
 # ---------------------------------------------------------------------------
 
+def write_csv(path, rows, header=("team", "elo", "seed", "region")):
+    with open(path, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(header)
+        w.writerows(rows)
+
+
 class TestLoadTeams:
     def test_loads_correct_count(self, tmp_csv):
         teams = load_teams(tmp_csv)
@@ -323,6 +330,118 @@ class TestLoadTeams:
     def test_all_regions_present(self, tmp_csv):
         teams = load_teams(tmp_csv)
         assert set(t.region for t in teams) == set(REGIONS)
+
+    def test_skips_row_missing_seed(self, tmp_path):
+        """A row with blank seed is skipped; remaining valid rows still validated."""
+        path = str(tmp_path / "teams.csv")
+        good_rows = [[f"{r}_S{s}", 1600, s, r] for r in REGIONS for s in range(1, 17)]
+        # Add an extra row with blank seed — should be skipped silently
+        rows = good_rows + [["NoSeedTeam", 1600, "", "East"]]
+        write_csv(path, rows)
+        teams = load_teams(path)
+        assert len(teams) == 64
+        assert all(t.name != "NoSeedTeam" for t in teams)
+
+    def test_skips_row_missing_region(self, tmp_path):
+        path = str(tmp_path / "teams.csv")
+        good_rows = [[f"{r}_S{s}", 1600, s, r] for r in REGIONS for s in range(1, 17)]
+        rows = good_rows + [["NoRegionTeam", 1600, 1, ""]]
+        write_csv(path, rows)
+        teams = load_teams(path)
+        assert len(teams) == 64
+
+    def test_skips_row_missing_elo(self, tmp_path):
+        path = str(tmp_path / "teams.csv")
+        good_rows = [[f"{r}_S{s}", 1600, s, r] for r in REGIONS for s in range(1, 17)]
+        rows = good_rows + [["NoEloTeam", "", 1, "East"]]
+        write_csv(path, rows)
+        teams = load_teams(path)
+        assert len(teams) == 64
+
+    def test_skips_row_with_bad_elo(self, tmp_path):
+        path = str(tmp_path / "teams.csv")
+        good_rows = [[f"{r}_S{s}", 1600, s, r] for r in REGIONS for s in range(1, 17)]
+        rows = good_rows + [["BadEloTeam", "not_a_number", 1, "East"]]
+        write_csv(path, rows)
+        teams = load_teams(path)
+        assert len(teams) == 64
+
+    def test_extra_columns_ignored(self, tmp_path):
+        path = str(tmp_path / "teams.csv")
+        rows = [[f"{r}_S{s}", 1600, s, r, "extra_col"] for r in REGIONS for s in range(1, 17)]
+        write_csv(path, rows, header=("team", "elo", "seed", "region", "conference"))
+        teams = load_teams(path)
+        assert len(teams) == 64
+
+
+class TestValidateTeams:
+    def good_teams(self):
+        return [Team(f"{r}_S{s}", 1600, s, r) for r in REGIONS for s in range(1, 17)]
+
+    def test_valid_field_passes(self):
+        _validate_teams(self.good_teams())  # should not raise
+
+    def test_wrong_total_count(self):
+        teams = self.good_teams()[:63]
+        with pytest.raises(ValueError, match="63"):
+            _validate_teams(teams)
+
+    def test_duplicate_team_name(self):
+        teams = self.good_teams()
+        teams[1].name = teams[0].name  # make a duplicate
+        with pytest.raises(ValueError, match="Duplicate"):
+            _validate_teams(teams)
+
+    def test_wrong_region_count(self):
+        teams = [Team(f"X_S{s}", 1600, s, "East") for s in range(1, 65)]
+        with pytest.raises(ValueError, match="region"):
+            _validate_teams(teams)
+
+    def test_wrong_team_count_per_region(self):
+        teams = self.good_teams()
+        for t in teams:
+            if t.region == "east" and t.seed == 16:
+                t.region = "west"
+                break
+        with pytest.raises(ValueError, match="east"):
+            _validate_teams(teams)
+
+    def test_missing_seed_in_region(self):
+        teams = self.good_teams()
+        for t in teams:
+            if t.region == "east" and t.seed == 1:
+                t.seed = 17
+                break
+        with pytest.raises(ValueError, match="east"):
+            _validate_teams(teams)
+
+    def test_duplicate_seed_in_region(self):
+        teams = self.good_teams()
+        for t in teams:
+            if t.region == "east" and t.seed == 16:
+                t.seed = 1
+                break
+        with pytest.raises(ValueError, match="east"):
+            _validate_teams(teams)
+
+    def test_unknown_region_name(self):
+        teams = self.good_teams()
+        for t in teams:
+            if t.region == "east":
+                t.region = "atlantic"
+        with pytest.raises(ValueError, match="Unknown region"):
+            _validate_teams(teams)
+
+    def test_mixed_case_region_accepted(self, tmp_path):
+        path = str(tmp_path / "teams.csv")
+        rows = []
+        region_map = {"East": "east", "West": "West", "South": "SOUTH", "Midwest": "MidWest"}
+        for csv_region, actual_region in region_map.items():
+            for s in range(1, 17):
+                rows.append([f"{actual_region}_S{s}", 1600, s, actual_region])
+        write_csv(path, rows)
+        teams = load_teams(path)
+        assert all(t.region in REGIONS for t in teams)
 
 
 class TestSaveProbabilities:

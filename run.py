@@ -18,7 +18,7 @@ def main():
     parser.add_argument("--teams",     required=True, help="Path to teams CSV file")
     parser.add_argument("--trials",    type=int,       default=0,
                         help="Number of Monte Carlo trials (0 = skip, just do single sim)")
-    parser.add_argument("--out-image", default=None,   help="Path for bracket image (PNG)")
+    parser.add_argument("--out-image", default=None,   help="Path for bracket output (TXT)")
     parser.add_argument("--out-probs", default=None,   help="Path for probabilities CSV")
     parser.add_argument("--seed",      type=int,       default=None,
                         help="Random seed for reproducibility")
@@ -36,11 +36,17 @@ def main():
     # --- Single simulation ---
     print("\nRunning single simulation...")
     result = run_single(teams)
-    champ = result["champion"]
-    print(f"  Champion: ({champ.seed}) {champ.name}")
+
+    print("\n  Final Four:")
+    for w, l in result["f4_results"]:
+        print(f"    ({w.seed}) {w.name} def. ({l.seed}) {l.name}")
+    champ, runner_up = result["champ_result"]
+    print(f"\n  Championship:")
+    print(f"    ({champ.seed}) {champ.name} def. ({runner_up.seed}) {runner_up.name}")
+    print(f"\n  Champion: ({champ.seed}) {champ.name}")
 
     img_path = draw_bracket(result, args.out_image)
-    print(f"  Bracket image saved → {img_path}")
+    print(f"  Bracket saved → {img_path}")
 
     # --- Monte Carlo ---
     if args.trials > 0:
