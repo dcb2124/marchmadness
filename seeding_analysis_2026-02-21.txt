@@ -1,0 +1,35 @@
+Loaded 64 seeded teams from teams_2.20.csv
+
+Seed averages:
+  Seed  1: 1876.3  (n=4)
+  Seed  2: 1789.2  (n=4)
+  Seed  3: 1789.8  (n=4)
+  Seed  4: 1742.7  (n=4)
+  Seed  5: 1713.7  (n=4)
+  Seed  6: 1654.0  (n=4)
+  Seed  7: 1668.6  (n=4)
+  Seed  8: 1659.5  (n=4)
+  Seed  9: 1623.8  (n=4)
+  Seed 10: 1603.0  (n=4)
+  Seed 11: 1630.1  (n=4)
+  Seed 12: 1614.1  (n=4)
+  Seed 13: 1515.5  (n=4)
+  Seed 14: 1461.8  (n=4)
+  Seed 15: 1434.4  (n=4)
+  Seed 16: 1338.0  (n=4)
+
+Top 4 UNDERSEEDED (ELO well above seed average):
+  Team                           Seed      ELO  SeedAvg    Delta
+  --------------------------------------------------------------
+  Saint John's                      5   1797.2   1713.7    +83.5
+  Wright State                     16   1420.2   1338.0    +82.2
+  Miami (OH)                       11   1711.6   1630.1    +81.5
+  Liberty                          12   1672.7   1614.1    +58.6
+
+Top 4 OVERSEEDED (ELO well below seed average):
+  Team                           Seed      ELO  SeedAvg    Delta
+  --------------------------------------------------------------
+  Purdue                            2   1709.2   1789.2    -79.9
+  Missouri                         11   1552.7   1630.1    -77.4
+  Yale                             12   1543.9   1614.1    -70.2
+  California Baptist               13   1445.8   1515.5    -69.7

@@ -8,7 +8,8 @@
       "WebFetch(domain:www.hoopshq.com)",
       "Bash(pip install:*)",
       "Bash(python -m pytest:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(python3:*)"
     ]
   }
 }
