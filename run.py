@@ -10,7 +10,7 @@ Usage:
 import argparse
 import sys
 from simulator import load_teams, run_single, run_trials, compute_probabilities, save_probabilities
-from visualize import draw_bracket
+from visualize import draw_bracket, draw_bracket_png
 
 
 def main():
@@ -45,8 +45,11 @@ def main():
     print(f"    ({champ.seed}) {champ.name} def. ({runner_up.seed}) {runner_up.name}")
     print(f"\n  Champion: ({champ.seed}) {champ.name}")
 
-    img_path = draw_bracket(result, args.out_image)
-    print(f"  Bracket saved → {img_path}")
+    txt_path = draw_bracket(result, args.out_image)
+    print(f"  Bracket (text) → {txt_path}")
+    png_out = args.out_image.replace(".txt", ".png") if args.out_image else None
+    png_path = draw_bracket_png(result, png_out)
+    print(f"  Bracket (image) → {png_path}")
 
     # --- Monte Carlo ---
     if args.trials > 0:
